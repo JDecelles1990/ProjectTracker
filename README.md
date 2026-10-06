@@ -24,20 +24,20 @@ For Electron runtime, native SQLite setup notes, and troubleshooting, see [Setup
 
 ## What you can do
 
-- Create, edit, and delete projects and tasks.
-- Organize tasks by project, status, priority, and optional due date.
-- Review overview counts for open, in-progress, due-today, and overdue work.
-- Search tasks and filter by status, priority, project, or due-today.
-- Focus task search with a configurable keyboard shortcut and see the shortcut on hover.
-- Switch between light and dark themes; the selected appearance is saved locally.
-- Export projects, tasks, and preferences as a JSON backup from Preferences.
-- Keep data locally in SQLite under Electron's application-data directory.
+- ✅ **Implemented:** Create, edit, and delete projects and tasks.
+- ✅ **Implemented:** Organize tasks by project, status, priority, and optional due date.
+- ✅ **Implemented:** Review overview counts for open, in-progress, due-today, and overdue work.
+- ✅ **Implemented:** Search tasks and filter by status, priority, project, or due-today.
+- ✅ **Implemented:** Focus task search with a configurable keyboard shortcut and see the shortcut on hover.
+- ✅ **Implemented:** Switch between light and dark themes; the selected appearance is saved locally.
+- ✅ **Implemented:** Export projects, tasks, and preferences as a JSON backup from Preferences.
+- ✅ **Implemented:** Keep data locally in SQLite under Electron's application-data directory.
 
-For the current scope and known non-goals, see [Product scope](docs/product-scope.md). For an in-app walkthrough, see [Usage](docs/usage.md).
+The ✅ marker identifies features currently implemented. 💡 entries in the Ideas section are not implemented. For the complete status key and product scope, see [Product scope](docs/product-scope.md); for an in-app walkthrough, see [Usage](docs/usage.md).
 
-## Idea
+## Ideas — not implemented
 
-Potential future improvements include recurring tasks, reminders, backup restore, and calendar integrations. These are possibilities rather than commitments; the current app remains focused on a reliable local project and task workflow.
+💡 **Idea (not implemented):** Recurring tasks, reminders, backup restore, and calendar integrations are possibilities rather than commitments.
 
 ## Development checks
 

@@ -29,6 +29,9 @@ See [Architecture](docs/architecture.md) for process boundaries and request flow
 - Surface errors; do not silently swallow failures or return success-shaped fallbacks.
 - Never add credentials or other secrets to source or documentation.
 - Update user and architecture documentation when behavior, product scope, setup, or system boundaries change. Keep the README concise and link to focused guides rather than duplicating them.
+- Use the status indicators defined in [Product scope](docs/product-scope.md) when describing capabilities: distinguish implemented, planned, partial, and idea-only work. Do not label a feature implemented unless it exists in the current code.
+- Keep the README, product-scope, usage, architecture, and data-model docs consistent with the shipped behavior. When a feature changes, review all directly related docs and remove stale claims.
+- Keep the Usage guide limited to workflows users can perform now. Keep proposed work under an explicitly labeled **Ideas — not implemented** section unless it has been approved as planned; retain status labels when updating docs from another contributor or assistant.
 
 ## Validation
 
