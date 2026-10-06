@@ -2,7 +2,7 @@
 
 ## Product intent
 
-Daymark is a private, single-user desktop workspace for turning personal projects into manageable tasks. It favors a quiet overview and a dependable local database over accounts, collaboration, or file-based task records.
+ProjectTracker is a private, single-user desktop workspace for turning personal projects into manageable tasks. It favors a quiet overview and a dependable local database over accounts, collaboration, or file-based task records.
 
 ## MVP capabilities
 
@@ -12,11 +12,13 @@ Daymark is a private, single-user desktop workspace for turning personal project
 - Browse all tasks, a project's tasks, or tasks due today.
 - Search task titles, descriptions, and project names; filter by status, priority, and project.
 - Configure the task-search keyboard shortcut and see the active shortcut beside search.
+- Switch between locally persisted light and dark themes.
+- Export projects, tasks, and preferences to a versioned JSON backup.
 - Keep task, project, and preference data in a local SQLite database.
 
 ## Explicitly out of scope
 
-This first version does not include accounts, sync, sharing, notifications, recurring tasks, subtasks, attachments, calendar integrations, or import/export. It has no server component. Markdown documents describe the product and code; they are not used to store task/project records.
+This first version does not include accounts, sync, sharing, notifications, recurring tasks, subtasks, attachments, calendar integrations, or importing/restoring backups. It has no server component. Markdown documents describe the product and code; they are not used to store task/project records.
 
 ## Product principles
 

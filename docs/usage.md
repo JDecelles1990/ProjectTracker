@@ -20,6 +20,14 @@ Search matches task title, description, and assigned project name. Combine it wi
 
 The keyboard shortcut hint beside task search shows the active shortcut; hover over it to see its purpose. Open **Preferences** from the workspace controls at the bottom of the sidebar to choose **Ctrl/Command + K**, **Ctrl/Command + Shift + K**, or **Ctrl/Command + F**. The modifier is Ctrl on Windows/Linux and Command on macOS. The selected shortcut is saved locally and focuses task search when another editable control does not have focus.
 
+## Appearance
+
+Use the **Dark mode** or **Light mode** button in the top bar to switch themes. Your selection is saved in the local SQLite preferences and restored the next time you open ProjectTracker.
+
+## Export a JSON backup
+
+Open **Preferences** from the workspace controls at the bottom of the sidebar and select **Export backup**. Choose a destination and filename in the system save dialog. ProjectTracker exports a versioned JSON snapshot containing projects, tasks, preferences, and the export timestamp. The backup is a separate copy; exporting does not change or remove data in ProjectTracker. Backup restore/import is not yet supported.
+
 ## Where data lives
 
-Tasks, projects, and preferences are saved automatically to `daymark.sqlite` in Electron's application user-data folder. Closing and reopening the app does not remove them. This release has no sync or backup feature; users should back up the database file if they need an independent copy.
+Tasks, projects, and preferences are saved automatically to `projecttracker.sqlite` in Electron's application user-data folder. Closing and reopening the app does not remove them. ProjectTracker has no sync service; use the JSON backup export to keep an independent copy.

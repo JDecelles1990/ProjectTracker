@@ -7,6 +7,8 @@ import type {
   SearchShortcut,
   Task,
   TaskInput,
+  Theme,
+  TrackerBackup,
   TrackerSummary,
 } from "@shared/types";
 
@@ -107,8 +109,12 @@ export function createRepositories(db: Database.Database) {
   };
 
   const getPreferences = (): Preferences => {
-    const row = db.prepare("SELECT value FROM preferences WHERE key = 'searchShortcut'").get() as { value: SearchShortcut } | undefined;
-    return { searchShortcut: row?.value ?? "mod+k" };
+    const rows = db.prepare("SELECT key, value FROM preferences WHERE key IN ('searchShortcut', 'theme')").all() as { key: string; value: string }[];
+    const values = new Map(rows.map(({ key, value }) => [key, value]));
+    return {
+      searchShortcut: (values.get("searchShortcut") as SearchShortcut | undefined) ?? "mod+k",
+      theme: (values.get("theme") as Theme | undefined) ?? "light",
+    };
   };
 
   const saveSearchShortcut = (shortcut: SearchShortcut): Preferences => {
@@ -119,5 +125,22 @@ export function createRepositories(db: Database.Database) {
     return getPreferences();
   };
 
-  return { listTasks, listProjects, saveTask, saveProject, deleteTask, deleteProject, getSummary, getPreferences, saveSearchShortcut };
+  const saveTheme = (theme: Theme): Preferences => {
+    db.prepare(`
+      INSERT INTO preferences (key, value) VALUES ('theme', @theme)
+      ON CONFLICT(key) DO UPDATE SET value = excluded.value
+    `).run({ theme });
+    return getPreferences();
+  };
+
+  const createBackup = (): TrackerBackup => ({
+    format: "projecttracker-backup",
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    projects: listProjects(),
+    tasks: listTasks(),
+    preferences: getPreferences(),
+  });
+
+  return { listTasks, listProjects, saveTask, saveProject, deleteTask, deleteProject, getSummary, getPreferences, saveSearchShortcut, saveTheme, createBackup };
 }

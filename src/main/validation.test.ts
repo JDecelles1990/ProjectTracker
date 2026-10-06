@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseProjectInput, parseSearchShortcut, parseTaskInput } from "./validation";
+import { parseProjectInput, parseSearchShortcut, parseTaskInput, parseTheme } from "./validation";
 
 describe("IPC input validation", () => {
   it("normalizes optional fields and accepts a valid task", () => {
@@ -24,5 +24,10 @@ describe("IPC input validation", () => {
   it("accepts supported search shortcuts and rejects unknown values", () => {
     expect(parseSearchShortcut("mod+f")).toBe("mod+f");
     expect(() => parseSearchShortcut("alt+k")).toThrow("supported search shortcut");
+  });
+
+  it("accepts supported appearance themes and rejects unknown values", () => {
+    expect(parseTheme("dark")).toBe("dark");
+    expect(() => parseTheme("sepia")).toThrow("supported appearance theme");
   });
 });

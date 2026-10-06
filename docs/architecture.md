@@ -1,6 +1,6 @@
 # Architecture
 
-Daymark is a **modular monolith** packaged as a desktop application. Its modules have explicit responsibilities and testable boundaries, but they ship together as one application. There are no network services.
+ProjectTracker is a **modular monolith** packaged as a desktop application. Its modules have explicit responsibilities and testable boundaries, but they ship together as one application. There are no network services.
 
 ## Runtime shape
 
@@ -18,16 +18,16 @@ Electron main process
           │ parameterized SQL
           ▼
 SQLite
-  <Electron userData>/daymark.sqlite
+  <Electron userData>/projecttracker.sqlite
 ```
 
-The renderer has no direct access to Node.js, Electron IPC, or SQLite. The main process owns persistence and treats renderer-supplied IPC payloads as untrusted input.
+The renderer has no direct access to Node.js, Electron IPC, the filesystem, or SQLite. The main process owns persistence and treats renderer-supplied IPC payloads as untrusted input. The explicit backup-export handler is the only feature path that opens a native file-save dialog and writes an application-generated JSON file.
 
 ## Process boundaries
 
 ### Renderer — `src/renderer/`
 
-`App.tsx` owns the current overview and due-today views, local search/filter state, forms, preferences UI, and presentation. The search shortcut is loaded and saved through `window.tracker`; the renderer registers the configured shortcut and updates its visible hint. It must not import Electron APIs, open the database, or contain persistence queries. `styles.css` owns visual presentation.
+`App.tsx` owns the current overview and due-today views, local search/filter state, forms, preferences UI, and presentation. The search shortcut and appearance theme are loaded and saved through `window.tracker`; the renderer registers the configured shortcut and updates its visible hint, and applies the selected light/dark theme. It also offers a typed `exportBackup` call and reports its result. It must not import Electron APIs, open the database, or contain persistence queries. `styles.css` owns visual presentation.
 
 ### Preload — `src/preload/`
 
@@ -35,7 +35,7 @@ The renderer has no direct access to Node.js, Electron IPC, or SQLite. The main 
 
 ### Main process — `src/main/`
 
-- `index.ts` creates the application window and registers named IPC handlers.
+- `index.ts` creates the application window, registers named IPC handlers, and implements the explicit JSON backup save-dialog/write flow.
 - `validation.ts` parses IPC values from `unknown` into validated domain inputs before mutation.
 - `repositories.ts` owns SQL operations, persistence mapping, read-time summaries, and persisted preferences.
 - `database.ts` creates and configures the SQLite connection.
@@ -57,13 +57,13 @@ For the file-by-file ownership table, see [Module responsibilities](modules.md).
 4. The repository runs parameterized SQLite statements and returns domain-shaped records.
 5. The renderer updates or refreshes its local view and presents failures to the user.
 
-When adding an operation, define its input and return type in shared contracts, expose only that method from preload, register and validate its matching IPC handler, implement persistence in the repository, and update the UI. The search shortcut preference currently supports `mod+k`, `mod+shift+k`, and `mod+f`, where `mod` maps to Command on macOS and Ctrl elsewhere. Do not add a broad generic IPC escape hatch.
+When adding an operation, define its input and return type in shared contracts, expose only that method from preload, register and validate its matching IPC handler, implement persistence in the repository, and update the UI. The search shortcut preference currently supports `mod+k`, `mod+shift+k`, and `mod+f`, where `mod` maps to Command on macOS and Ctrl elsewhere. Appearance preference supports the light and dark themes. Backup export uses a fixed IPC operation, an application-generated snapshot, and a native save dialog; do not expose generic file writing or add a broad generic IPC escape hatch.
 
 ## Persistence and migrations
 
-SQLite is the authoritative store for projects, tasks, and user preferences. The database is opened lazily at `<Electron userData>/daymark.sqlite`; startup enables foreign keys and write-ahead logging. The current schema is versioned with `PRAGMA user_version` and includes database constraints and indexes in addition to runtime validation. Schema version 2 adds a `preferences` key/value table and seeds the configurable task-search shortcut with `mod+k`.
+SQLite is the authoritative store for projects, tasks, and user preferences. The database is opened lazily at `<Electron userData>/projecttracker.sqlite`; startup enables foreign keys and write-ahead logging. The current schema is versioned with `PRAGMA user_version` and includes database constraints and indexes in addition to runtime validation. Schema version 2 adds a `preferences` key/value table and seeds the configurable task-search shortcut with `mod+k`; version 3 adds the default light theme.
 
-Schema changes belong in `src/main/schema.ts` as forward, transactional migrations. Once a migration is released, append a new migration instead of editing the old one. Keep repositories on bound parameters, preserve existing records through migrations, and add tests for changed schema and repository behavior. See [Data model](data-model.md) for tables and relationships.
+Schema changes belong in `src/main/schema.ts` as forward, transactional migrations. Once a migration is released, append a new migration instead of editing the old one. Schema version 3 seeds a `light` theme preference alongside the configurable search shortcut. Keep repositories on bound parameters, preserve existing records through migrations, and add tests for changed schema and repository behavior. See [Data model](data-model.md) for tables and relationships.
 
 ## Electron safeguards
 

@@ -1,5 +1,5 @@
-import { SEARCH_SHORTCUTS, TASK_PRIORITIES, TASK_STATUSES } from "@shared/types";
-import type { ProjectInput, SearchShortcut, TaskInput } from "@shared/types";
+import { SEARCH_SHORTCUTS, TASK_PRIORITIES, TASK_STATUSES, THEMES } from "@shared/types";
+import type { ProjectInput, SearchShortcut, TaskInput, Theme } from "@shared/types";
 
 function record(value: unknown): Record<string, unknown> {
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
@@ -70,4 +70,11 @@ export function parseSearchShortcut(value: unknown): SearchShortcut {
     throw new Error("Choose a supported search shortcut.");
   }
   return value as SearchShortcut;
+}
+
+export function parseTheme(value: unknown): Theme {
+  if (typeof value !== "string" || !THEMES.includes(value as Theme)) {
+    throw new Error("Choose a supported appearance theme.");
+  }
+  return value as Theme;
 }

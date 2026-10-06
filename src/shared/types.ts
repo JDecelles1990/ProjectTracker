@@ -5,10 +5,26 @@ export type TaskStatus = (typeof TASK_STATUSES)[number];
 export type TaskPriority = (typeof TASK_PRIORITIES)[number];
 export const SEARCH_SHORTCUTS = ["mod+k", "mod+shift+k", "mod+f"] as const;
 export type SearchShortcut = (typeof SEARCH_SHORTCUTS)[number];
+export const THEMES = ["light", "dark"] as const;
+export type Theme = (typeof THEMES)[number];
 
 export interface Preferences {
   searchShortcut: SearchShortcut;
+  theme: Theme;
 }
+
+export interface TrackerBackup {
+  format: "projecttracker-backup";
+  version: 1;
+  exportedAt: string;
+  projects: Project[];
+  tasks: Task[];
+  preferences: Preferences;
+}
+
+export type BackupExportResult =
+  | { canceled: true }
+  | { canceled: false; fileName: string; projectCount: number; taskCount: number };
 
 export interface Project {
   id: string;
@@ -69,6 +85,8 @@ export interface TrackerApi {
   getSummary(): Promise<TrackerSummary>;
   getPreferences(): Promise<Preferences>;
   saveSearchShortcut(shortcut: SearchShortcut): Promise<Preferences>;
+  saveTheme(theme: Theme): Promise<Preferences>;
+  exportBackup(): Promise<BackupExportResult>;
 }
 
 declare global {

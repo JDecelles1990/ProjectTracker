@@ -45,9 +45,34 @@ describe("tracker repositories", () => {
     const db = createTestDatabase();
     const repository = createRepositories(db);
     try {
-      expect(repository.getPreferences()).toEqual({ searchShortcut: "mod+k" });
-      expect(repository.saveSearchShortcut("mod+shift+k")).toEqual({ searchShortcut: "mod+shift+k" });
-      expect(repository.getPreferences()).toEqual({ searchShortcut: "mod+shift+k" });
+      expect(repository.getPreferences()).toEqual({ searchShortcut: "mod+k", theme: "light" });
+      expect(repository.saveSearchShortcut("mod+shift+k")).toEqual({ searchShortcut: "mod+shift+k", theme: "light" });
+      expect(repository.saveTheme("dark")).toEqual({ searchShortcut: "mod+shift+k", theme: "dark" });
+      expect(repository.getPreferences()).toEqual({ searchShortcut: "mod+shift+k", theme: "dark" });
+    } finally {
+      db.close();
+    }
+  });
+
+  it("creates a versioned backup containing projects, tasks, and preferences", () => {
+    const db = createTestDatabase();
+    const repository = createRepositories(db);
+    try {
+      const [project] = repository.saveProject({ name: "Garden", description: "", color: "#2468ac" });
+      repository.saveTask({
+        projectId: project.id, title: "Plant herbs", description: "", status: "todo", priority: "medium", dueDate: null,
+      });
+      repository.saveSearchShortcut("mod+f");
+
+      const backup = repository.createBackup();
+      expect(backup).toMatchObject({
+        format: "projecttracker-backup",
+        version: 1,
+        projects: [{ id: project.id, name: "Garden" }],
+        tasks: [{ title: "Plant herbs", projectId: project.id }],
+        preferences: { searchShortcut: "mod+f", theme: "light" },
+      });
+      expect(Number.isNaN(Date.parse(backup.exportedAt))).toBe(false);
     } finally {
       db.close();
     }

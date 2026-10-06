@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent } from "react";
-import type { Preferences, Project, ProjectInput, SearchShortcut, Task, TaskInput, TaskPriority, TaskStatus, TrackerSummary } from "@shared/types";
+import type { BackupExportResult, Preferences, Project, ProjectInput, SearchShortcut, Task, TaskInput, TaskPriority, TaskStatus, TrackerSummary } from "@shared/types";
 
 type View = "overview" | "today";
 type TaskDraft = Omit<TaskInput, "id">;
@@ -51,7 +51,7 @@ function App() {
   const [statusFilter, setStatusFilter] = useState("");
   const [priorityFilter, setPriorityFilter] = useState("");
   const [query, setQuery] = useState("");
-  const [preferences, setPreferences] = useState<Preferences>({ searchShortcut: "mod+k" });
+  const [preferences, setPreferences] = useState<Preferences>({ searchShortcut: "mod+k", theme: "light" });
   const [taskModal, setTaskModal] = useState<Task | null | "new">(null);
   const [projectModal, setProjectModal] = useState<Project | null | "new">(null);
   const [preferencesModal, setPreferencesModal] = useState(false);
@@ -95,6 +95,7 @@ function App() {
   const activeProject = projects.find((project) => project.id === projectFilter);
   const heading = view === "today" ? "Due today" : activeProject?.name ?? "Your overview";
   const hasActiveFilters = Boolean(query || statusFilter || priorityFilter || projectFilter || view === "today");
+  const isDarkTheme = preferences.theme === "dark";
 
   function clearFilters() {
     setQuery("");
@@ -129,6 +130,15 @@ function App() {
       setError("");
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "Could not save preferences.");
+    }
+  }
+
+  async function toggleTheme() {
+    try {
+      setPreferences(await window.tracker.saveTheme(isDarkTheme ? "light" : "dark"));
+      setError("");
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Could not save appearance preference.");
     }
   }
 
@@ -174,9 +184,9 @@ function App() {
   }
 
   return (
-    <div className="app-shell">
+    <div className="app-shell" data-theme={preferences.theme}>
       <aside className="sidebar">
-        <div className="brand"><span className="brand-mark">D</span><span>daymark</span></div>
+        <div className="brand"><span className="brand-mark">P</span><span>ProjectTracker</span></div>
         <div className="workspace-label">PERSONAL WORKSPACE</div>
         <nav className="primary-nav" aria-label="Main navigation">
           <button className={!projectFilter && view === "overview" ? "nav-item selected" : "nav-item"} onClick={() => { setView("overview"); setProjectFilter(null); }}>
@@ -209,7 +219,7 @@ function App() {
       <main className="main-area">
         <header className="topbar">
           <div className="breadcrumb"><span>Workspace</span><span className="crumb-slash">/</span><strong>{activeProject?.name ?? (view === "today" ? "Today" : "Overview")}</strong></div>
-          <div className="topbar-actions"><span className="local-badge"><span /> Saved on this device</span><button className="button button-primary" onClick={() => setTaskModal("new")}><span>＋</span> New task</button></div>
+          <div className="topbar-actions"><span className="local-badge"><span /> Saved on this device</span><button className="button button-secondary theme-toggle" type="button" aria-label={`Switch to ${isDarkTheme ? "light" : "dark"} mode`} aria-pressed={isDarkTheme} title={`Switch to ${isDarkTheme ? "light" : "dark"} mode`} onClick={() => void toggleTheme()}><span aria-hidden="true">{isDarkTheme ? "☀" : "☾"}</span>{isDarkTheme ? "Light mode" : "Dark mode"}</button><button className="button button-primary" onClick={() => setTaskModal("new")}><span>＋</span> New task</button></div>
         </header>
 
         <div className="content">
@@ -253,7 +263,7 @@ function App() {
 
       {taskModal !== null && <TaskDialog task={taskModal === "new" ? null : taskModal} projects={projects} onClose={() => setTaskModal(null)} onSave={saveTask} />}
       {projectModal !== null && <ProjectDialog project={projectModal === "new" ? null : projectModal} onClose={() => setProjectModal(null)} onSave={saveProject} />}
-      {preferencesModal && <PreferencesDialog preferences={preferences} onClose={() => setPreferencesModal(false)} onSave={saveSearchShortcut} />}
+      {preferencesModal && <PreferencesDialog preferences={preferences} onClose={() => setPreferencesModal(false)} onSave={saveSearchShortcut} onExport={window.tracker.exportBackup} />}
     </div>
   );
 }
@@ -310,12 +320,31 @@ function ProjectDialog({ project, onClose, onSave }: { project: Project | null; 
   </form></Modal>;
 }
 
-function PreferencesDialog({ preferences, onClose, onSave }: { preferences: Preferences; onClose: () => void; onSave: (shortcut: SearchShortcut) => void }) {
+function PreferencesDialog({ preferences, onClose, onSave, onExport }: { preferences: Preferences; onClose: () => void; onSave: (shortcut: SearchShortcut) => void; onExport: () => Promise<BackupExportResult> }) {
   const [shortcut, setShortcut] = useState<SearchShortcut>(preferences.searchShortcut);
+  const [backupStatus, setBackupStatus] = useState("");
+  const [isExporting, setIsExporting] = useState(false);
 
   function submit(event: FormEvent) {
     event.preventDefault();
     onSave(shortcut);
+  }
+
+  async function exportBackup() {
+    setIsExporting(true);
+    setBackupStatus("");
+    try {
+      const result = await onExport();
+      if (result.canceled) {
+        setBackupStatus("Backup export canceled.");
+      } else {
+        setBackupStatus(`Saved ${result.fileName} (${result.projectCount} projects, ${result.taskCount} tasks).`);
+      }
+    } catch (reason) {
+      setBackupStatus(reason instanceof Error ? reason.message : "Could not export your backup.");
+    } finally {
+      setIsExporting(false);
+    }
   }
 
   return <Modal title="Preferences" onClose={onClose}><form onSubmit={submit}>
@@ -328,6 +357,11 @@ function PreferencesDialog({ preferences, onClose, onSave }: { preferences: Pref
       </select>
       <small className="field-help">Focus task search from anywhere outside another editable field.</small>
     </label>
+    <div className="backup-setting">
+      <div><strong>Data backup</strong><p>Save your projects, tasks, and preferences as a JSON file.</p></div>
+      <button type="button" className="button button-secondary" onClick={() => void exportBackup()} disabled={isExporting}>{isExporting ? "Preparing..." : "Export backup"}</button>
+    </div>
+    {backupStatus && <p className="backup-status" role="status">{backupStatus}</p>}
     <div className="modal-actions"><button type="button" className="button button-secondary" onClick={onClose}>Cancel</button><button type="submit" className="button button-primary">Save preferences</button></div>
   </form></Modal>;
 }
@@ -335,7 +369,7 @@ function PreferencesDialog({ preferences, onClose, onSave }: { preferences: Pref
 function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
   return <div className="modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
     <section className="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-      <div className="modal-heading"><div><div className="eyebrow">DAYMARK</div><h2 id="modal-title">{title}</h2></div><button className="icon-button" aria-label="Close" onClick={onClose}>×</button></div>
+      <div className="modal-heading"><div><div className="eyebrow">PROJECTTRACKER</div><h2 id="modal-title">{title}</h2></div><button className="icon-button" aria-label="Close" onClick={onClose}>×</button></div>
       {children}
     </section>
   </div>;

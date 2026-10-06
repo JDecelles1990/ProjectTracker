@@ -38,15 +38,16 @@ describe("database migrations", () => {
 
       migrate(db);
 
-      expect(Number(db.pragma("user_version", { simple: true }))).toBe(2);
+      expect(Number(db.pragma("user_version", { simple: true }))).toBe(3);
       expect(db.prepare("SELECT id, name FROM projects").all()).toEqual([{ id: "project-1", name: "Garden" }]);
       expect(db.prepare("SELECT id, project_id, title, status FROM tasks").all()).toEqual([
         { id: "task-1", project_id: "project-1", title: "Plant herbs", status: "in_progress" },
       ]);
       expect(db.prepare("SELECT value FROM preferences WHERE key = 'searchShortcut'").get()).toEqual({ value: "mod+k" });
+      expect(db.prepare("SELECT value FROM preferences WHERE key = 'theme'").get()).toEqual({ value: "light" });
 
       migrate(db);
-      expect(Number(db.pragma("user_version", { simple: true }))).toBe(2);
+      expect(Number(db.pragma("user_version", { simple: true }))).toBe(3);
       expect(db.prepare("SELECT count(*) AS count FROM projects").get()).toEqual({ count: 1 });
     } finally {
       db.close();

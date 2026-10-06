@@ -43,4 +43,12 @@ export function migrate(db: Database.Database): void {
       `);
     })();
   }
+  if (version < 3) {
+    db.transaction(() => {
+      db.exec(`
+        INSERT INTO preferences (key, value) VALUES ('theme', 'light');
+        PRAGMA user_version = 3;
+      `);
+    })();
+  }
 }

@@ -1,4 +1,4 @@
-# Daymark MVP — Implementation Complete
+# ProjectTracker MVP — Implementation Complete
 
 ## Architecture
 
@@ -15,24 +15,26 @@
 ✅ **Views:** Overview with summary cards, "Due today" focused list, project-filtered view  
 ✅ **Search & filters:** Title/description search, filter by status/priority/project/due date  
 ✅ **Persistence:** Automatic SQLite save in OS app-data directory  
+✅ **Backup export:** Export a versioned JSON snapshot of projects, tasks, and preferences
+✅ **Appearance:** Switch between locally persisted light and dark themes
 ✅ **Error handling:** User-friendly error messages, input validation at IPC boundary  
 
 ## Changed/Created Files
 
 ### Source Code
-- `src/shared/types.ts` — Domain types, TaskStatus, TaskPriority, API contracts
+- `src/shared/types.ts` — Domain types, TaskStatus, TaskPriority, preferences, and backup API contracts
 - `src/main/schema.ts` — SQLite schema and migration (new; electron-free)
 - `src/main/database.ts` — SQLite connection, lifecycle (refactored)
-- `src/main/repositories.ts` — CRUD operations, aggregates, parameterized queries
+- `src/main/repositories.ts` — CRUD operations, aggregates, parameterized queries, backup snapshot construction
 - `src/main/validation.ts` — IPC input parsing, bounds checking, enum validation
-- `src/main/index.ts` — IPC handler registration, window lifecycle
+- `src/main/index.ts` — IPC handler registration, window lifecycle, and JSON export save flow
 - `src/main/test-utils.ts` — In-memory database helper (new)
 - `src/main/repositories.test.ts` — CRUD, foreign keys, summary tests
 - `src/main/validation.test.ts` — Input parsing, format validation tests
-- `src/preload/index.ts` — Minimal contextBridge API
+- `src/preload/index.ts` — Minimal contextBridge API, including backup export
 - `src/renderer/main.tsx` — React root, StrictMode
-- `src/renderer/App.tsx` — Main component: views, navigation, modals, CRUD forms
-- `src/renderer/styles.css` — Complete UI design (dark-neutral, responsive)
+- `src/renderer/App.tsx` — Main component: views, navigation, modals, CRUD forms, preferences, backup control
+- `src/renderer/styles.css` — Complete responsive UI design
 - `src/renderer/index.html` — HTML entry point (new; moved from root)
 
 ### Configuration & Build
@@ -43,14 +45,14 @@
 - `index.html` — Root HTML (legacy; superceded by src/renderer/index.html)
 
 ### Documentation
-- `README.md` — Product overview, quick start, validation commands (updated by collaborator)
+- `README.md` — Product overview, quick start, validation commands, and backup export
 - `AGENTS.md` — Coding patterns, contribution guidelines, architecture reference (updated by collaborator)
 - `docs/product-scope.md` — Feature scope, MVP capabilities, principles
-- `docs/architecture.md` — System layers, data flow, security notes (updated by collaborator)
+- `docs/architecture.md` — System layers, data flow, security notes, and explicit backup export boundary
 - `docs/data-model.md` — SQLite schema, migration policy (updated by collaborator)
 - `docs/modules.md` — Module responsibilities and boundaries (updated by collaborator)
 - `docs/setup.md` — Development setup, troubleshooting, packaging notes
-- `docs/usage.md` — User guide, navigation, search/filters
+- `docs/usage.md` — User guide, navigation, search/filters, and JSON backup export
 
 ### Build Output
 - `out/main/index.js` (9.2 KB)
@@ -60,13 +62,16 @@
 ## Validation Results
 
 ```
-✅ npm test       → 5 tests passed (2 files)
-✅ npm typecheck  → 0 errors (strict mode)
-✅ npm build      → All bundles produced
+✅ npm run typecheck → 0 errors (strict mode)
+✅ npm run build     → All bundles produced
+✅ Electron runtime smoke → schema v3 migration and backup snapshot verified
+⚠️ npm test          → System Node ABI mismatch after rebuilding better-sqlite3 for Electron; see docs/setup.md
 ```
 
 ### Test Coverage
-- **repositories.test.ts:** CRUD operations, foreign key cascading, summary aggregation
+- **repositories.test.ts:** CRUD operations, foreign key cascading, summary aggregation, backup snapshot shape
+- **schema.test.ts:** Version-1 to version-2 migration preserving project/task records
+- **preferences-persistence.test.ts:** Preference durability across database reopen
 - **validation.test.ts:** Input parsing, bounds validation, enum checking, date format validation
 
 ## Key Implementation Details
@@ -85,10 +90,9 @@
 - No cloud sync or accounts
 - No recurring tasks, subtasks, or attachments
 - No notifications or reminders
-- No keyboard shortcuts (future work)
+- No additional keyboard shortcuts beyond configurable task search
 - No undo/redo or version history
-- No dark mode toggle (currently light theme)
-- No import/export (future work)
+- No backup restore/import, CSV export, or sync (future work)
 - No CI/CD or release automation configured
 
 ## How to Run

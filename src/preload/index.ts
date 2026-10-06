@@ -11,6 +11,8 @@ const api: TrackerApi = {
   getSummary: () => ipcRenderer.invoke("summary:get"),
   getPreferences: () => ipcRenderer.invoke("preferences:get"),
   saveSearchShortcut: (shortcut) => ipcRenderer.invoke("preferences:search-shortcut:set", shortcut),
+  saveTheme: (theme) => ipcRenderer.invoke("preferences:theme:set", theme),
+  exportBackup: () => ipcRenderer.invoke("backup:export"),
 };
 
 contextBridge.exposeInMainWorld("tracker", api);

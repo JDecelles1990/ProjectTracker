@@ -1,10 +1,10 @@
 # Agent and contributor guidance
 
-These instructions apply to changes in Daymark. Read [README.md](README.md) for the product overview and the relevant guides under [`docs/`](docs/) before changing behavior or architecture.
+These instructions apply to changes in ProjectTracker. Read [README.md](README.md) for the product overview and the relevant guides under [`docs/`](docs/) before changing behavior or architecture.
 
 ## Architectural boundaries
 
-- Keep Daymark a modular monolith. Renderer, preload, main process, and shared contracts are layers in one desktop application, not separate services.
+- Keep ProjectTracker a modular monolith. Renderer, preload, main process, and shared contracts are layers in one desktop application, not separate services.
 - Keep renderer code presentational. It may keep UI state and call typed `window.tracker` methods, but must not access Node.js, SQLite, filesystem APIs, or raw IPC.
 - Keep the preload API narrow and explicitly allow-listed. Add named methods; do not expose generic IPC capabilities.
 - Treat renderer-supplied IPC payloads as untrusted. Validate mutation inputs in `src/main/validation.ts` before persistence.
