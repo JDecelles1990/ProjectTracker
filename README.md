@@ -55,6 +55,7 @@ The build creates the Electron application bundles; a distributable installer an
 - [Module responsibilities](docs/modules.md) — ownership of source directories and files.
 - [Data model](docs/data-model.md) — SQLite tables, constraints, and migration policy.
 - [Product scope](docs/product-scope.md) — goals, current capabilities, and non-goals.
+- [Feature plan](PLAN.md) — proposed future increments, boundaries, and acceptance criteria (planning only).
 - [Usage](docs/usage.md) — using projects, tasks, search, and filters.
 - [Setup and development](docs/setup.md) — prerequisites, commands, Windows troubleshooting, and packaging notes.
 - [Agent and contributor guidance](AGENTS.md) — repository conventions and required architectural safeguards.

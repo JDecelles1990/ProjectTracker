@@ -52,5 +52,6 @@ At minimum, cover changed behavior with focused tests. Database tests use `creat
 - [Module responsibilities](docs/modules.md): source file ownership.
 - [Data model](docs/data-model.md): database schema and migration policy.
 - [Product scope](docs/product-scope.md): MVP capabilities and non-goals.
+- [Feature plan](PLAN.md): proposed future increments; planning only, not implementation authorization.
 - [Usage](docs/usage.md): user workflows.
 - [Setup and development](docs/setup.md): prerequisites, commands, troubleshooting, and packaging notes.
