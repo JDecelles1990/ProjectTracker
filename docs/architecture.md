@@ -1,5 +1,7 @@
 # Architecture
 
+> Documentation cross-reference: [Documentation matrix](../DOCS-MATRIX.md).
+
 ProjectTracker is a **modular monolith** packaged as a desktop application. Its modules have explicit responsibilities and testable boundaries, but they ship together as one application. There are no network services.
 
 ## Runtime shape

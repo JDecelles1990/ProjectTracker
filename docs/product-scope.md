@@ -1,5 +1,7 @@
 # Product scope
 
+> Documentation cross-reference: [Documentation matrix](../DOCS-MATRIX.md).
+
 ## Product intent
 
 ProjectTracker is a private, single-user desktop workspace for turning personal projects into manageable tasks. It favors a quiet overview and a dependable local database over accounts, collaboration, or file-based task records.

@@ -1,5 +1,7 @@
 # Agent and contributor guidance
 
+> Documentation cross-reference: [Documentation matrix](DOCS-MATRIX.md).
+
 These instructions apply to changes in ProjectTracker. Read [README.md](README.md) for the product overview and the relevant guides under [`docs/`](docs/) before changing behavior or architecture.
 
 ## Architectural boundaries
@@ -53,5 +55,6 @@ At minimum, cover changed behavior with focused tests. Database tests use `creat
 - [Data model](docs/data-model.md): database schema and migration policy.
 - [Product scope](docs/product-scope.md): MVP capabilities and non-goals.
 - [Feature plan](PLAN.md): proposed future increments; planning only, not implementation authorization.
+- [Documentation matrix](DOCS-MATRIX.md): Markdown topic ownership, cross-references, and consistency rules.
 - [Usage](docs/usage.md): user workflows.
 - [Setup and development](docs/setup.md): prerequisites, commands, troubleshooting, and packaging notes.

@@ -1,5 +1,7 @@
 # Setup and development
 
+> Documentation cross-reference: [Documentation matrix](../DOCS-MATRIX.md).
+
 ## Requirements
 
 - Windows 10 or newer

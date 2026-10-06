@@ -1,5 +1,7 @@
 # Module responsibilities
 
+> Documentation cross-reference: [Documentation matrix](../DOCS-MATRIX.md).
+
 | Path | Responsibility | Boundary |
 |---|---|---|
 | `src/shared/types.ts` | Shared task/project/status/priority, preferences, themes, backup, and API contracts | No runtime database or UI behavior |

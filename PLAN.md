@@ -1,5 +1,7 @@
 # ProjectTracker feature plan
 
+> Documentation cross-reference: [Documentation matrix](DOCS-MATRIX.md).
+
 **Status: planning only.** This document proposes future product work; it does not authorize implementation or imply that any listed feature is available. Check the status indicators in [Product scope](docs/product-scope.md) and verify current code before changing a status. The next implementation slice should be explicitly selected before work begins.
 
 ## Recommendation

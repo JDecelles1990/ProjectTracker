@@ -1,5 +1,7 @@
 # Usage guide
 
+> Documentation cross-reference: [Documentation matrix](../DOCS-MATRIX.md).
+
 ## Find your way around
 
 - **Overview** shows summary cards and all tasks.

@@ -1,5 +1,7 @@
 # Data model
 
+> Documentation cross-reference: [Documentation matrix](../DOCS-MATRIX.md).
+
 SQLite is the authoritative store. It is private to the local desktop profile and lives at `<Electron userData>/projecttracker.sqlite`. On startup after the app rename, an existing `daymark.sqlite` database in the previous application-data location is copied forward so the original remains intact.
 
 ## `projects`

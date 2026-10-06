@@ -1,5 +1,7 @@
 # ProjectTracker implementation status
 
+> Documentation cross-reference: [Documentation matrix](DOCS-MATRIX.md).
+
 This file summarizes the capabilities currently present in the application. It is not a roadmap; see [Product scope](docs/product-scope.md) for the shared feature-status labels and idea-only items.
 
 ## Implemented

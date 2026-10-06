@@ -1,5 +1,7 @@
 # ProjectTracker
 
+> Documentation cross-reference: [Documentation matrix](DOCS-MATRIX.md).
+
 ProjectTracker is a local-first desktop app for keeping personal projects and tasks in one clear, manageable workspace. Create projects, capture tasks, set priorities and due dates, and focus on what needs attention today.
 
 Task and project records live in a local SQLite database on your device. Markdown files document the product and guide development; they are not used as a task database. ProjectTracker does not require an account or a network service.
@@ -56,6 +58,7 @@ The build creates the Electron application bundles; a distributable installer an
 - [Data model](docs/data-model.md) — SQLite tables, constraints, and migration policy.
 - [Product scope](docs/product-scope.md) — goals, current capabilities, and non-goals.
 - [Feature plan](PLAN.md) — proposed future increments, boundaries, and acceptance criteria (planning only).
+- [Documentation matrix](DOCS-MATRIX.md) — ownership and cross-references for all Markdown files.
 - [Usage](docs/usage.md) — using projects, tasks, search, and filters.
 - [Setup and development](docs/setup.md) — prerequisites, commands, Windows troubleshooting, and packaging notes.
 - [Agent and contributor guidance](AGENTS.md) — repository conventions and required architectural safeguards.
